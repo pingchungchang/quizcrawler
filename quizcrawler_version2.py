@@ -10,10 +10,11 @@ class Q:
         self.title = 'UN'
         self.tpe = 'UN'
         self.ans = []
-ansurl = 'https://docs.google.com/forms/d/e/1FAIpQLSfTOgVK3fmXrUGOJAHfny4AteeJHK4P35J98RKThfITgalRfA/viewanalytics'
-ansurl = 'https://docs.google.com/forms/d/e/1FAIpQLSch4RRpXGUeCN4PArZg0b3KbSj4tZVCsiDX9j7n5bJ2Ggv3yA/viewanalytics'
+# ansurl = 'https://docs.google.com/forms/d/e/1FAIpQLSch4RRpXGUeCN4PArZg0b3KbSj4tZVCsiDX9j7n5bJ2Ggv3yA/viewanalytics'
+# formurl = 'https://docs.google.com/forms/d/e/1FAIpQLSch4RRpXGUeCN4PArZg0b3KbSj4tZVCsiDX9j7n5bJ2Ggv3yA/viewform'
+ansurl = 'https://docs.google.com/forms/d/e/1FAIpQLSegyf-MI5anXBWz8l1BWC7VfhPeB3S7zlrzdeo5a14TZyyOAA/viewanalytics'
 formurl = 'https://docs.google.com/forms/d/e/1FAIpQLSegyf-MI5anXBWz8l1BWC7VfhPeB3S7zlrzdeo5a14TZyyOAA/viewform?hr_submission=ChkIvsOd5-YKEhAI18nrm-0PEgcIhoa65-YKEAA'
-formurl = 'https://docs.google.com/forms/d/e/1FAIpQLSch4RRpXGUeCN4PArZg0b3KbSj4tZVCsiDX9j7n5bJ2Ggv3yA/viewform'
+
 email = 'ck1100890@gl.ck.tp.edu.tw'
 password = 'hjecha1018'
 titleclass = 'M7eMe'
@@ -90,26 +91,30 @@ def WaitForKey():
 
 def FillIn(now,re):
     global chrome
-    print(re.tpe)
+    # print(re.tpe)
     if re.tpe == 'long':
-        blank = now.find_element_by_class_name('KHxj8b tL9Q4c')
-        blank.send_keys(re.ans)
+        blank = now.find_elements_by_xpath('.//textarea')
+        if len(blank) == 0:
+            blank = now.find_elements_by_xpath('.//input')
+        blank[0].send_keys(re.ans)
     elif re.tpe == 'box':
-        rows = now.find_elements_by_class_name('ssX1Bd')
-        rows.pop(0)
-        rows.pop(0)
+        rows = now.find_elements_by_class_name('lLfZXe')
+        # rows.pop(0)
+        # rows.pop(0)
         print(len(rows))
         for i in rows:
             choices = i.find_elements_by_xpath('.//*[@jsaction]')
+            choices = i.find_elements_by_class_name('Od2TWd')
+            # choices.pop(0)
             print(len(choices))
-            for j in choices:
+            # for j in choices:
                 # print(j.text)
-                j.click()
-                print('hi')
+                # j.click()
+                # print('hi')
             print()
-            choices[int(re.ans[0][1])].click()
+            choices[int(re.ans[0][1])].send_keys(Keys.SPACE)
             re.ans.pop(0)
-    elif len(now.find_elements_by_class_name('docssharedWizToggleLabeledContainer Yri8Nb')) > 0:
+    elif len(now.find_elements_by_class_name('Y6Myld')) > 0:
         re.tpe = 'multi';
         choices = []
         big = 0;
@@ -118,12 +123,12 @@ def FillIn(now,re):
         for i in re.ans:
             if int(i[1])>big*0.8:
                 choices.append(i[0])
-        selections = i.find_elements_by_xpath('.//*[@role="list"]//label')
+        selections = now.find_elements_by_xpath('.//*[@role="list"]//label')
         for i in selections:
             if i.find_element_by_class_name('ulDsOb').text in choices:
                 button = i.find_element_by_xpath('.//*[@id]')
                 button.click()
-    elif len(now.find_elements_by_class_name('docssharedWizToggleLabeledContainer ajBQVb')) > 0:
+    elif len(now.find_elements_by_class_name('SG0AAe')) > 0:
         re.tpe = 'choice'
         big = re.ans[0];
         for i in re.ans:
@@ -136,7 +141,7 @@ def FillIn(now,re):
             if i.find_element_by_class_name('ulDsOb').text == big[0]:
                 button = i.find_element_by_xpath('.//*[@id]')
                 button.click()        
-    elif len(now.find_elements_by_class_name('jgvuAb ybOdnf cGN2le t9kgXb llrsB iWO5td')) > 0:
+    elif len(now.find_elements_by_class_name('jgvuAb')) > 0:
         re.tpe = 'list'
         big = re.ans[0]
         for i in re.ans:
@@ -152,7 +157,9 @@ def FillIn(now,re):
             # print(c.find_element_by_xpath('.//span').text)
             if c.find_element_by_xpath('.//span').text == big[0]:
                 c.send_keys(Keys.ENTER)
-    elif len(now.find_elements_by_class_name('whsOnd zHQkBf')) > 0:
+                time.sleep(0.3)
+                break
+    elif len(now.find_elements_by_class_name('whsOnd')) > 0:
         re.tpe = 'cloze'
         big =re.ans[0];
         for i in re.ans:
@@ -164,21 +171,27 @@ def FillIn(now,re):
         blank.send_keys(Keys.ENTER)
     else:
         print("ERROR")
+    print(re.tpe)
     return
         
 def FillAns(url,refer):
     global chrome
     chrome.get(url)
     WaitForKey()
-    all = chrome.find_elements_by_class_name('Qr7Oae')
-    for now in all:
-        tar = now.find_element_by_class_name(titleclass).text.replace(u'\xa0',u' ')
-        tar = tar.replace(u'\n',u'')
-        for j in range(len(refer)):
-            if refer[j].title == tar:
-                FillIn(now,refer[j])
-                refer.pop(j)
-                break
+    while True:
+        all = chrome.find_elements_by_class_name('Qr7Oae')
+        for now in all:
+            tar = now.find_element_by_class_name(titleclass).text.replace(u'\xa0',u' ')
+            tar = tar.replace(u'\n',u'')
+            for j in range(len(refer)):
+                if refer[j].title == tar:
+                    FillIn(now,refer[j])
+                    refer.pop(j)
+                    break
+        WaitForKey()
+        nxt = chrome.find_elements_by_css_selector('#mG61Hd > div.RH5hzf.RLS9Fe > div > div.ThHDze > div.DE3NNc.CekdCb > div.lRwqcd > div')[-1]#find next button
+        nxt.click()
+        time.sleep(1)
     return
 
 if __name__ == '__main__':
