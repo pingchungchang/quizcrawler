@@ -100,10 +100,12 @@ def FillIn(now,re):
         rows.pop(0)
         print(len(rows))
         for i in rows:
-            choices = i.find_elements_by_xpath('.//[@click]')
+            choices = i.find_elements_by_xpath('.//*[@jsaction]')
             print(len(choices))
             for j in choices:
-                print(j.text)
+                # print(j.text)
+                j.click()
+                print('hi')
             print()
             choices[int(re.ans[0][1])].click()
             re.ans.pop(0)
@@ -132,7 +134,7 @@ def FillIn(now,re):
         for i in selections:
             # print(k.find_element_by_class_name('ulDsOb').text)
             if i.find_element_by_class_name('ulDsOb').text == big[0]:
-                button = k.find_element_by_xpath('.//*[@id]')
+                button = i.find_element_by_xpath('.//*[@id]')
                 button.click()        
     elif len(now.find_elements_by_class_name('jgvuAb ybOdnf cGN2le t9kgXb llrsB iWO5td')) > 0:
         re.tpe = 'list'
