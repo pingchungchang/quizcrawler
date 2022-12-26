@@ -31,13 +31,24 @@ def Login():
 def GetAns(url):
     global ansurl
     chrome.get(ansurl)
+    input('press enter when done')
+    soup = BeautifulSoup(chrome.page_source,'html.parser')
+    arr = []
+    details = soup.find_all('script')[4].string
+    print(soup.text)
+    print(len(details))
+
+    with open("output.txt", mode = "w", encoding = "utf-8") as file: file.write(details)
+
     return;
 def FillAns(url):
     return;
 
+def WaitForKey():
+    input('press enter to continue')
 if __name__ == '__main__':
     Login()
-    time.sleep(0.5)
+    WaitForKey()
     GetAns(ansurl)
-    time.sleep(0,5)
+    WaitForKey()
     FillAns(formurl)
