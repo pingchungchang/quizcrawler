@@ -46,10 +46,10 @@ def GetAns(url):
     dels.reverse()
     for i in dels:
         details.pop(i)
-    print(len(details))
-    for i in details:
-        print(i.text)
-        print('')
+    # print(len(details))
+    # for i in details:
+    #     print(i.text)
+    #     print('')
 
     for i in details:
         tmp = Q()
@@ -101,6 +101,8 @@ def FillIn(now,re):
         blank = now.find_elements_by_xpath('.//textarea')
         if len(blank) == 0:
             blank = now.find_elements_by_xpath('.//input')
+        else:
+            return False
         blank[0].send_keys(re.ans)
     elif re.tpe == 'box':
         # now = now.find_element_by_class_name()
@@ -108,6 +110,8 @@ def FillIn(now,re):
         # rows.pop(0)
         # rows.pop(0)
         print(len(rows))
+        if len(rows) == 0:
+            return False
         for i in rows:
             choices = i.find_elements_by_xpath('.//*[@jsaction]')
             choices = i.find_elements_by_class_name('Od2TWd')
@@ -177,8 +181,9 @@ def FillIn(now,re):
         blank.send_keys(Keys.ENTER)
     else:
         print("ERROR")
+        return False
     print(re.tpe)
-    return
+    return True
         
 def FillAns(url,refer):
     global chrome
@@ -192,10 +197,10 @@ def FillAns(url,refer):
             print(repr(tar))
             for j in range(len(refer)):
                 if refer[j].title[:min(len(refer[j].title),len(tar))] == tar[:min(len(refer[j].title),len(tar))]:
-                    FillIn(now,refer[j])
-                    print('in')
-                    refer.pop(j)
-                    break
+                    if FillIn(now,refer[j]):
+                        print('in')
+                        refer.pop(j)
+                        break
         WaitForKey()
         nxt = chrome.find_elements_by_css_selector('#mG61Hd > div.RH5hzf.RLS9Fe > div > div.ThHDze > div.DE3NNc.CekdCb > div.lRwqcd > div')[-1]#find next button
         nxt.click()
