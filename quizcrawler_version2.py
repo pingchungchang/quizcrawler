@@ -12,15 +12,15 @@ class Q:
         self.ans = []
 # ansurl = 'https://docs.google.com/forms/d/e/1FAIpQLSch4RRpXGUeCN4PArZg0b3KbSj4tZVCsiDX9j7n5bJ2Ggv3yA/viewanalytics'
 # formurl = 'https://docs.google.com/forms/d/e/1FAIpQLSch4RRpXGUeCN4PArZg0b3KbSj4tZVCsiDX9j7n5bJ2Ggv3yA/viewform'
-ansurl = 'https://docs.google.com/forms/d/e/1FAIpQLSegyf-MI5anXBWz8l1BWC7VfhPeB3S7zlrzdeo5a14TZyyOAA/viewanalytics'
-formurl = 'https://docs.google.com/forms/d/e/1FAIpQLSegyf-MI5anXBWz8l1BWC7VfhPeB3S7zlrzdeo5a14TZyyOAA/viewform?hr_submission=ChkIvsOd5-YKEhAI18nrm-0PEgcIhoa65-YKEAA'
+ansurl = 'https://docs.google.com/forms/d/e/1FAIpQLSdgq2S6PHajiJNZPIbgX3Jb8HRF2suLl4yphDnvl0xw6Imc5w/viewanalytics'
+formurl = 'https://docs.google.com/forms/d/e/1FAIpQLSdgq2S6PHajiJNZPIbgX3Jb8HRF2suLl4yphDnvl0xw6Imc5w/viewform?hr_submission=ChkIvsOd5-YKEhAIgKD9n_EQEgcIhoa65-YKEAA'
 
 email = 'ck1100890@gl.ck.tp.edu.tw'
 password = 'hjecha1018'
 titleclass = 'M7eMe'
 
-
-chrome = webdriver.Chrome('./chromedriver')
+#.replace(u'\n',u'').replace(u'\xa0',u'').replace(u' ',u'')
+chrome = ''
 def Login():
     global email,password
     chrome.get('https://accounts.google.com/v3/signin/identifier?dsh=S-972875933%3A1672013913036171&hl=zh-tw&flowName=GlifWebSignIn&flowEntry=ServiceLogin&ifkv=AeAAQh6IJsqhC3os63jQ9MkZ2jtQJNLUYO1qh5WOTOs-_ezdN_HpCqAcDI6UUqX-MjuTm_K5nvF7')
@@ -53,8 +53,8 @@ def GetAns(url):
 
     for i in details:
         tmp = Q()
-        tmp.title = i.find(class_ = 'myXFAc RjsPE').text.replace(u'\xa0',u' ')
-        print(tmp.title)
+        tmp.title = i.find(class_ = 'myXFAc RjsPE').text.replace(u'\xa0',u'')
+        tmp.title = tmp.title.replace(u'\n',u'').replace(u' ',u'')
         isbox = False
         if i.find('table') != None:
             for j in i.find('table').find('tbody').find_all('tr'):
@@ -78,10 +78,15 @@ def GetAns(url):
                 for k in range(1,len(tmp.ans[j]),1):
                     if int(tmp.ans[j][k])>int(tmp.ans[j][biggest]):
                         biggest = k
-                tmp.ans[j] = [tmp.ans[j][0],biggest-1]
+                tmp.ans[j] = [tmp.ans[j][0].replace(u'\xa0',u'').replace(u'\n',u'').replace(u' ',u''),biggest-1]
         arr.append(tmp);
     for i in arr:
-        print(i.tpe,i.ans)
+        print(repr(i.title),end=":")
+        if type(i.ans) == str:
+            print(repr(i.ans))
+        else:
+            for j in i.ans:
+                print(repr(j),end=',')
         print('')
     return arr
 
@@ -98,6 +103,7 @@ def FillIn(now,re):
             blank = now.find_elements_by_xpath('.//input')
         blank[0].send_keys(re.ans)
     elif re.tpe == 'box':
+        # now = now.find_element_by_class_name()
         rows = now.find_elements_by_class_name('lLfZXe')
         # rows.pop(0)
         # rows.pop(0)
@@ -122,10 +128,10 @@ def FillIn(now,re):
             big = max(big,int(i[1]))
         for i in re.ans:
             if int(i[1])>big*0.8:
-                choices.append(i[0])
+                choices.append(i[0].replace(u'\n',u'').replace(u'\xa0',u'').replace(u' ',u''))
         selections = now.find_elements_by_xpath('.//*[@role="list"]//label')
         for i in selections:
-            if i.find_element_by_class_name('ulDsOb').text in choices:
+            if i.find_element_by_class_name('ulDsOb').text.replace(u'\xa0',u'').replace(u'\n',u'').replace(u' ',u'') in choices:
                 button = i.find_element_by_xpath('.//*[@id]')
                 button.click()
     elif len(now.find_elements_by_class_name('SG0AAe')) > 0:
@@ -138,7 +144,7 @@ def FillIn(now,re):
         selections = now.find_elements_by_xpath('.//span//label')
         for i in selections:
             # print(k.find_element_by_class_name('ulDsOb').text)
-            if i.find_element_by_class_name('ulDsOb').text == big[0]:
+            if i.find_element_by_class_name('ulDsOb').text.replace(u'\xa0',u'').replace(u'\n',u'').replace(u' ',u'') == big[0].replace(u'\n',u'').replace(u'\xa0',u'').replace(u' ',u''):
                 button = i.find_element_by_xpath('.//*[@id]')
                 button.click()        
     elif len(now.find_elements_by_class_name('jgvuAb')) > 0:
@@ -155,7 +161,7 @@ def FillIn(now,re):
         choices = now.find_elements_by_xpath('.//*[@class = "MocG8c HZ3kWc mhLiyf OIC90c LMgvRb"]')
         for c in choices:
             # print(c.find_element_by_xpath('.//span').text)
-            if c.find_element_by_xpath('.//span').text == big[0]:
+            if c.find_element_by_xpath('.//span').text == big[0].replace(u'\n',u'').replace(u'\xa0',u'').replace(u' ',u''):
                 c.send_keys(Keys.ENTER)
                 time.sleep(0.3)
                 break
@@ -181,20 +187,31 @@ def FillAns(url,refer):
     while True:
         all = chrome.find_elements_by_class_name('Qr7Oae')
         for now in all:
-            tar = now.find_element_by_class_name(titleclass).text.replace(u'\xa0',u' ')
-            tar = tar.replace(u'\n',u'')
+            tar = now.find_element_by_class_name(titleclass).text.replace(u'\xa0',u'')
+            tar = tar.replace(u'\n',u'').replace(u' ',u'')
+            print(repr(tar))
             for j in range(len(refer)):
-                if refer[j].title == tar:
+                if refer[j].title[:min(len(refer[j].title),len(tar))] == tar[:min(len(refer[j].title),len(tar))]:
                     FillIn(now,refer[j])
+                    print('in')
                     refer.pop(j)
                     break
         WaitForKey()
         nxt = chrome.find_elements_by_css_selector('#mG61Hd > div.RH5hzf.RLS9Fe > div > div.ThHDze > div.DE3NNc.CekdCb > div.lRwqcd > div')[-1]#find next button
         nxt.click()
-        time.sleep(1)
+        time.sleep(1.5)
     return
 
+def Ask():
+    global ansurl,formurl,email,password
+    email = input('enter email:\n')
+    password = maskpass.advpass()
+    ansurl = input('enter answer link\n')
+    formurl = input('enter form link\n')
+
 if __name__ == '__main__':
+    # Ask()
+    chrome = webdriver.Chrome('./chromedriver')
     Login()
     WaitForKey()
     arr = GetAns(ansurl)
