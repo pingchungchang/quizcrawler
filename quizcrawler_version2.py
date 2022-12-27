@@ -16,7 +16,7 @@ ansurl = 'https://docs.google.com/forms/d/e/1FAIpQLSdgq2S6PHajiJNZPIbgX3Jb8HRF2s
 formurl = 'https://docs.google.com/forms/d/e/1FAIpQLSdgq2S6PHajiJNZPIbgX3Jb8HRF2suLl4yphDnvl0xw6Imc5w/viewform?hr_submission=ChkIvsOd5-YKEhAIgKD9n_EQEgcIhoa65-YKEAA'
 
 email = 'ck1100890@gl.ck.tp.edu.tw'
-password = 'hjecha1018'
+password = 'hehehe'
 titleclass = 'M7eMe'
 
 #.replace(u'\n',u'').replace(u'\xa0',u'').replace(u' ',u'')
@@ -215,7 +215,7 @@ def Ask():
     formurl = input('enter form link\n')
 
 if __name__ == '__main__':
-    # Ask()
+    Ask()
     chrome = webdriver.Chrome('./chromedriver')
     Login()
     WaitForKey()
